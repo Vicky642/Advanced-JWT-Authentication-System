@@ -1,16 +1,13 @@
+using Advanced_JWT_Authentication_System.Data;
+using Advanced_JWT_Authentication_System.Models.Db;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Advanced_JWT_Authentication_System
 {
@@ -26,7 +23,12 @@ namespace Advanced_JWT_Authentication_System
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            // Configure Entity Framework to use MySQL
+            services.AddDbContext<authenticationContext>(options =>
+                options.UseMySql(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    new MySqlServerVersion(new Version(5, 5, 62)) // Specify the version of MySQL you're using
+                ));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
