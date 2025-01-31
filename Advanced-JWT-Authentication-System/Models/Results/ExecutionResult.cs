@@ -11,12 +11,15 @@ namespace Advanced_JWT_Authentication_System.Models.Results
         public string Message { get; set; }
         public T Data { get; set; }
         public string ErrorDetails { get; set; }
+        public string Token { get; set; }
 
         // Constructor for success without data
-        public ExecutionResult(bool success, string message)
+        public ExecutionResult(bool success, string message, T data = default, string token = null)
         {
             Success = success;
             Message = message;
+            Data = data;
+            Token = token;
         }
 
         // Constructor for success with data

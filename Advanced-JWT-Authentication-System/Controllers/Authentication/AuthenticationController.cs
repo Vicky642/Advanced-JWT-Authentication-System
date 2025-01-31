@@ -33,5 +33,18 @@ namespace Advanced_JWT_Authentication_System.Controllers.Authentication
 
             return BadRequest(result); // Return the error result with message
         }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var result = await _userRepository.LoginAsync(model);
+
+            if (result.Success)
+            {
+                return Ok(new { Token = result.Token, Message = result.Message });
+            }
+
+            return Unauthorized(new { Message = result.Message });
+        }
     }
 }

@@ -1,15 +1,20 @@
 using Advanced_JWT_Authentication_System.Interfaces;
 using Advanced_JWT_Authentication_System.Models.Db;
 using Advanced_JWT_Authentication_System.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Advanced_JWT_Authentication_System
 {
@@ -32,6 +37,23 @@ namespace Advanced_JWT_Authentication_System
                     new MySqlServerVersion(new Version(5, 5, 62)) // Specify the version of MySQL you're using
                 ));
             services.AddControllers();
+            // Add Razor Pages services
+            services.AddRazorPages(); 
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+           .AddJwtBearer(options =>
+           {
+               options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+               {
+                   ValidateIssuer = true,
+                   ValidateAudience = true,
+                   ValidateLifetime = true,
+                   ValidateIssuerSigningKey = true,
+                   ValidIssuer = Configuration["Jwt:Issuer"],
+                   ValidAudience = Configuration["Jwt:Audience"],
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-secret-key"))
+               };
+           });
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSwaggerGen(c =>
@@ -47,18 +69,36 @@ namespace Advanced_JWT_Authentication_System
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Advanced_JWT_Authentication_System v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Advanced_JWT_Authentication_System v1");
+                    c.RoutePrefix = "api-docs"; // Swagger will now be available at /swagger instead of the default page
+                });
             }
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
 
+            // Middleware to force redirect root URL ("/") to "/Authentication/RegistrationPage"
+            app.Use(async (context, next) =>
+            {
+                // Redirect only if the request is for the root ("/") or Swagger
+                if (context.Request.Path == "/" || context.Request.Path.StartsWithSegments("/swagger"))
+                {
+                    context.Response.Redirect("/Authentication/RegistrationPage", false);
+                    return;
+                }
+                await next();
+            });
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapRazorPages();  // map Razor Pages             
             });
         }
     }

@@ -1,0 +1,12 @@
+﻿body {
+}
+
+/* Ensure both inputs have the same width */
+.phone-input {
+    width: 100% !important; /* Override the plugin's width if needed */
+}
+
+/* You can add additional styling if the phone input still doesn't align */
+.iti {
+    width: 100% !important; /* Ensure the intlTelInput wrapper also takes full width */
+}

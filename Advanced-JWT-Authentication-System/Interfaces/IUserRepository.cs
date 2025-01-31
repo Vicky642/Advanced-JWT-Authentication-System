@@ -14,5 +14,6 @@ namespace Advanced_JWT_Authentication_System.Interfaces
         Task<User> GetByUsernameAsync(string username);
         Task<User> GetByEmailAsync(string email);       
         Task<ExecutionResult<User>> RegisterAsync(RegistrationModel model);
+        Task<ExecutionResult<User>> LoginAsync(LoginModel model);
     }
 }

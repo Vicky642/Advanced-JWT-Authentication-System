@@ -1,0 +1,102 @@
+﻿@page
+@model Advanced_JWT_Authentication_System.Pages.Authentication.RegistrationPageModel
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
+
+        <!-- Google OAuth Button -->
+        <a href="#" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-5 h-5">
+            Sign up with Google
+        </a>
+
+        <!-- Divider -->
+        <div class="flex items-center my-6">
+            <div class="flex-grow border-t border-gray-300"></div>
+            <span class="mx-4 text-gray-500">or</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <form class="space-y-3">
+            <!-- First Name and Last Name in a Grid -->
+            <div class="grid grid-cols-2 gap-3">
+                <!-- First Name Input -->
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Last Name Input -->
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Username Input -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Last Name Input -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Phone Input -->
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                <div>
+                    <!-- Phone Input -->
+                    <input type="tel" id="phone" name="phone" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Password Input -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Sign Up
+                </button>
+            </div>
+        </form>
+
+
+        <!-- Login Link -->
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Already have an account?
+            <a href="#" class="text-blue-600 hover:text-blue-500">Log in</a>
+        </p>
+    </div>
+</body>
+
+<script>
+    var input = document.querySelector("#phone");
+    var iti = window.intlTelInput(input, {
+        initialCountry: "ke", // Use auto-detect for the user's country
+        geoIpLookup: function(callback) {
+            fetch("https://ipinfo.io", { method: "GET" })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var countryCode = (data && data.country) ? data.country : "ke";
+                    callback(countryCode);
+                });
+        },
+        separateDialCode: true, // Display dial code separately
+        //preferredCountries: ["us", "gb", "in"] // List of preferred countries
+    });
+</script>
