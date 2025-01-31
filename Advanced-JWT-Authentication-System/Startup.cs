@@ -1,7 +1,9 @@
-using Advanced_JWT_Authentication_System.Data;
+using Advanced_JWT_Authentication_System.Interfaces;
 using Advanced_JWT_Authentication_System.Models.Db;
+using Advanced_JWT_Authentication_System.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,10 +28,12 @@ namespace Advanced_JWT_Authentication_System
             // Configure Entity Framework to use MySQL
             services.AddDbContext<authenticationContext>(options =>
                 options.UseMySql(
-                    Configuration.GetConnectionString("DefaultConnection"),
+                    Configuration.GetConnectionString("AuthenticationDefaultConnection"),
                     new MySqlServerVersion(new Version(5, 5, 62)) // Specify the version of MySQL you're using
                 ));
             services.AddControllers();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Advanced_JWT_Authentication_System", Version = "v1" });
