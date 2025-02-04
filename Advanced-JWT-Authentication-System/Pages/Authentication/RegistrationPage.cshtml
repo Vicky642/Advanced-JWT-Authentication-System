@@ -9,7 +9,7 @@
         <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
 
         <!-- Google OAuth Button -->
-        <a href="#" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <a href="#" data-bind="click: initiateGoogleOAuth" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-5 h-5">
             Sign up with Google
         </a>
@@ -22,31 +22,22 @@
         </div>
 
         <form class="space-y-3">
-            <!-- First Name and Last Name in a Grid -->
-            <div class="grid grid-cols-2 gap-3">
-                <!-- First Name Input -->
-                <div>
-                    <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
-                    <input type="text" id="firstName" name="firstName" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
-
-                <!-- Last Name Input -->
-                <div>
-                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
-                    <input type="text" id="lastName" name="lastName" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
+            <!-- FullName Input -->
+            <div>
+                <label for="fullname" class="block text-sm font-medium text-gray-700">FullName</label>
+                <input type="text" id="fullname" name="fullname" placeholder="FullName" class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: fullname">
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <!-- Username Input -->
                 <div>
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="text" id="username" name="username" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input type="text" id="username" name="username" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: username">
                 </div>
 
-                <!-- Last Name Input -->
+                <!-- Email Input -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="email" name="email" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input type="email" id="email" name="email" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: email">
                 </div>
             </div>
 
@@ -55,19 +46,19 @@
                 <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                 <div>
                     <!-- Phone Input -->
-                    <input type="tel" id="phone" name="phone" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <input type="tel" id="phone" name="phone" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: PhoneNumber">
                 </div>
             </div>
 
             <!-- Password Input -->
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" name="password" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <input type="password" id="password" name="password" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: password">
             </div>
 
             <!-- Submit Button -->
             <div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-bind="click: register">
                     Sign Up
                 </button>
             </div>
@@ -81,22 +72,56 @@
         </p>
     </div>
 </body>
+@section Scripts {
+    <script src="/js/knockout-3.5.1.js"></script>  
+    <script src="/js/register.js"></script>
+    <script>
+        const input = document.querySelector("#phone");
+        const getCountryCode = (callback) => {
+            $.get("https://ipapi.co/json/", function (response) {
+                const countryCode = response.country_code.toLowerCase();
+                callback(countryCode);
+            }, "json").fail(function () { callback("ke"); });
+        };
 
-<script>
-    var input = document.querySelector("#phone");
-    var iti = window.intlTelInput(input, {
-        initialCountry: "ke", // Use auto-detect for the user's country
-        geoIpLookup: function(callback) {
-            fetch("https://ipinfo.io", { method: "GET" })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    var countryCode = (data && data.country) ? data.country : "ke";
-                    callback(countryCode);
+        const iti = intlTelInput(input, {
+            initialCountry: "ke",
+            geoIpLookup: getCountryCode,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        // Update the Knockout observable fullPhoneNumber on input or country change
+        input.addEventListener("countrychange", updateFullPhoneNumber);
+        input.addEventListener("input", updateFullPhoneNumber);
+
+        function updateFullPhoneNumber() {
+            // const dialCode = iti.getSelectedCountryData().dialCode;
+            // const phoneNumber = input.value.replace(/\s+/g, ''); // Remove any spaces in phone number
+            // const fullPhoneNumber = `+${dialCode}${phoneNumber}`;
+            var fullPhoneNumber = iti.getNumber();
+            debugger;
+            // Update the Knockout observable
+            const viewModel = ko.dataFor(document.querySelector("form")); // Assuming your form contains the ViewModel
+            viewModel.fullPhoneNumber(fullPhoneNumber);
+        }
+    </script>
+    @*<script>
+        // Initialize Google Sign-In
+        function startGoogleSignIn() {
+            gapi.load('auth2', function () {
+                gapi.auth2.init({
+                    client_id: '928086659887-rn2ug3up95s1bk4hooavpj2patc468j0.apps.googleusercontent.com' // Replace with your Google OAuth client ID
+                }).then(function () {
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.attachClickHandler(document.getElementById('google-signin-button'), {}, function (googleUser) {
+                        var registerVM = ko.dataFor(document.body); // Get the Knockout view model instance
+                        registerVM.googleSignIn(googleUser); // Pass the Google user to the view model
+                    });
                 });
-        },
-        separateDialCode: true, // Display dial code separately
-        //preferredCountries: ["us", "gb", "in"] // List of preferred countries
-    });
-</script>
+            });
+        }
+
+        // Initialize Google Sign-In when the page loads
+        startGoogleSignIn();
+    </script>*@
+}

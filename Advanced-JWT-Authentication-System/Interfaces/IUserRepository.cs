@@ -15,5 +15,6 @@ namespace Advanced_JWT_Authentication_System.Interfaces
         Task<User> GetByEmailAsync(string email);       
         Task<ExecutionResult<User>> RegisterAsync(RegistrationModel model);
         Task<ExecutionResult<User>> LoginAsync(LoginModel model);
+        Task<ExecutionResult<User>> GoogleSignInAsync(GoogleSignInModel model);
     }
 }

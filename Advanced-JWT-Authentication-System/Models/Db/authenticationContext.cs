@@ -97,7 +97,7 @@ namespace Advanced_JWT_Authentication_System.Models.Db
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.FirstName)
+                entity.Property(e => e.FullName)
                     .IsRequired()
                     .HasMaxLength(50);
 
@@ -107,16 +107,10 @@ namespace Advanced_JWT_Authentication_System.Models.Db
 
                 entity.Property(e => e.IsEmailVerified)
                     .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
+                    .HasDefaultValueSql("b'0'");              
 
-                entity.Property(e => e.LastName)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.PasswordHash)
-                    .IsRequired()
-                    .HasMaxLength(255);
-
+                entity.Property(e => e.PasswordHash).HasMaxLength(255);                 
+                    
                 entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(20);
