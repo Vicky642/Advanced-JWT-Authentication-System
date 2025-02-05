@@ -60,18 +60,20 @@ namespace Advanced_JWT_Authentication_System.Controllers.Authentication
                 redirectUri = _configuration["GoogleAuth:RedirectUri"],
                 codeModel = code
             };
-            //var clientId = _configuration["GoogleAuth:ClientId"];
-            //var clientSecret = _configuration["GoogleAuth:ClientSecret"];
-            //var redirectUri = _configuration["GoogleAuth:RedirectUri"];
 
             var result = await _userRepository.GoogleSignInAsync(googleSign);
 
             if (result.Success)
             {
-                return Ok(new { Token = result.Token, Message = result.Message });
+                //return Ok(new { Token = result.Token, Message = result.Message, Success = true });
+                // Store the token in session/local storage if needed
+                //HttpContext.Session.SetString("AuthToken", result.Token);
+
+                // ✅ Redirect to Index page after successful sign-in
+                return RedirectToPage("/Home/Index");
             }
 
-            return BadRequest(new { Message = result.Message });
+            return BadRequest(new { Message = result.Message, Success = false });
         }
 
         //[HttpPost("GoogleLogin")]

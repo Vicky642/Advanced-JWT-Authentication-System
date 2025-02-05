@@ -1,0 +1,53 @@
+﻿@page
+@model Advanced_JWT_Authentication_System.Pages.Authentication.LoginPageModel
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Welcome back!</h2>
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+        <!-- Google OAuth Button -->
+        <a href="#" data-bind="click: initiateGoogleOAuth" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-5 h-5">
+            Sign in with Google
+        </a>
+
+        <!-- Divider -->
+        <div class="flex items-center my-6">
+            <div class="flex-grow border-t border-gray-300"></div>
+            <span class="mx-4 text-gray-500">or</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <form class="space-y-3">
+            <!-- FullName Input -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">FullName</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username Or Email" class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: fullname">
+            </div>
+
+            <!-- Password Input -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required class="mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" data-bind="value: password">
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-bind="click: register">
+                    Log In
+                </button>
+            </div>
+        </form>
+
+
+        <!-- Login Link -->
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Don't have an account?
+            <a href="/Authentication/RegistrationPage" class="text-blue-600 hover:text-blue-500">Sign up</a>
+        </p>
+    </div>
+</body>
+<script src="/js/register.js"></script>

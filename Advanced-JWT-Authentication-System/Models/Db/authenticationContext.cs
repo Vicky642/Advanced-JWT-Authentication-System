@@ -93,27 +93,34 @@ namespace Advanced_JWT_Authentication_System.Models.Db
 
                 entity.Property(e => e.Id).HasColumnType("bigint(20)");
 
+                entity.Property(e => e.AuthProvider)
+                    .IsRequired()
+                    .HasColumnType("enum('LOCAL','GOOGLE')")
+                    .HasDefaultValueSql("'LOCAL'");
+
                 entity.Property(e => e.Email)
                     .IsRequired()
                     .HasMaxLength(100);
 
                 entity.Property(e => e.FullName)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.IsDeleted)
                     .HasColumnType("bit(1)")
                     .HasDefaultValueSql("b'0'");
 
-                entity.Property(e => e.IsEmailVerified)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");              
+                entity.Property(e => e.PasswordHash).HasMaxLength(255);
 
-                entity.Property(e => e.PasswordHash).HasMaxLength(255);                 
-                    
                 entity.Property(e => e.PasswordResetToken).HasMaxLength(255);
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+
+                entity.Property(e => e.ProviderId).HasMaxLength(255);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.VerificationCode).HasMaxLength(10);
             });

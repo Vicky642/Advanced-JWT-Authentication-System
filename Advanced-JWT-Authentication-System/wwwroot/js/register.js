@@ -89,70 +89,55 @@ function RegisterViewModel() {
         const state = "STATE_STRING"; // Optional: Add a state parameter for security
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
 
+        // ✅ Store a flag in localStorage to track sign-in initiation
+        localStorage.setItem("googleSignInInitiated", "true");
+
         // Redirect the user to Google's authorization page
         window.location.href = authUrl;
     };
 
+    // ✅ Function to handle Google callback
+    self.handleGoogleCallback = function () {
+        debugger;
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
 
-    // Function to handle Google Sign-In
-    self.googleSignIn = function (googleUser) {
-        debugger;
-        var id_token = googleUser.getAuthResponse().id_token;
-
-        // You can extract Google user information
-        var profile = googleUser.getBasicProfile();
-        self.googleEmail(profile.getEmail());
-        self.googleFirstName(profile.getGivenName());
-        self.googleLastName(profile.getFamilyName());
-        debugger;
-        var googleData = {
-            FirstName: self.googleFirstName(),
-            LastName: self.googleLastName(),
-            Email: self.googleEmail(),
-            IdToken: id_token
-        };
-        debugger;
-        // Send this Google OAuth data to your backend
-        $.ajax({
-            url: "/Authentication/Authentication/RegisterWithGoogle",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(googleData),
-            success: function (response) {
-                console.log("Google Registration successful", response);
-                $.alert({
-                    title: 'Success!',
-                    content: 'Registration with Google was successful.',
-                    type: 'green',
-                    typeAnimated: true,
-                    boxWidth: '300px', // Set the box width to 300px (adjust as needed)
-                    useBootstrap: false, // Disable Bootstrap styling if not needed
-                    buttons: {
-                        OK: function () {
-                            window.location.href = '/Authentication/Login'; // Redirect to login page or wherever you'd like
-                        }
+        // ✅ Only proceed if sign-in was initiated
+        if (localStorage.getItem("googleSignInInitiated") === "true" && code) {
+            debugger;
+            $.ajax({
+                url: `/Authentication/Authentication/signin-google?code=${code}&state=${state}`,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        // ✅ Clear the flag after successful sign-in
+                        localStorage.removeItem("googleSignInInitiated");
+                        window.location.href = '/Home/Index';
+                    } else {
+                        alert("Google Sign-In failed: " + response.message);
+                        localStorage.removeItem("googleSignInInitiated"); // Clear the flag even on failure
                     }
-                });
-            },
-            error: function (error) {
-                console.error("Google OAuth registration failed", error);
-                $.alert({
-                    title: 'Error!',
-                    content: 'Google OAuth registration failed. Please try again.',
-                    type: 'red',
-                    typeAnimated: true,
-                    boxWidth: '300px', // Set the box width to 300px (adjust as needed)
-                    useBootstrap: false, // Disable Bootstrap styling if not needed
-                    buttons: {
-                        OK: function () {
-                            // Additional logic for retrying or debugging can go here
-                        }
-                    }
-                });
-            }
-        });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("An error occurred during Google Sign-In.");
+                    localStorage.removeItem("googleSignInInitiated"); // Clear the flag on error
+                }
+            });
+        }
     };
+
 }
 
 // Apply bindings
 ko.applyBindings(new RegisterViewModel());
+
+//// Handle Google callback when the page is loaded
+//$(document).ready(function () {
+//    // Use 'self' to refer to the RegisterViewModel instance
+//    var viewModel = ko.dataFor(document.body);  // Retrieve the current instance of RegisterViewModel
+//    if (viewModel && typeof viewModel.handleGoogleCallback === 'function') {
+//        viewModel.handleGoogleCallback(); // Call the method correctly
+//    }
+//});

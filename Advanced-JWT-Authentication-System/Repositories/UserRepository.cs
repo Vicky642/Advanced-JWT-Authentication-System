@@ -33,7 +33,7 @@ namespace Advanced_JWT_Authentication_System.Repositories
 
         public async Task<User> GetByUsernameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<User> GetByEmailAsync(string email)
@@ -60,7 +60,7 @@ namespace Advanced_JWT_Authentication_System.Repositories
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.Email),
             // Add other claims as needed
         };
@@ -111,19 +111,38 @@ namespace Advanced_JWT_Authentication_System.Repositories
                 var idToken = handler.ReadJwtToken(tokenResponse.IdToken);
                 var email = idToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
                 var name = idToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+                var googleId = idToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value; // Unique Google user ID
 
                 // Check if user exists, if not create a new user
                 var user = await GetByEmailAsync(email);
-                if (user == null)
+
+                if (user != null)
                 {
+                    if (user.AuthProvider == "LOCAL")
+                    {
+                        return new ExecutionResult<User>("This email is registered with manual sign-up. Please log in with your password.");
+                    }
+
+                    if (user.ProviderId != googleId)
+                    {
+                        return new ExecutionResult<User>("Google account mismatch detected.");
+                    }
+                }
+                else
+                {
+                    // Create a new user for first-time Google sign-in
                     user = new User
                     {
-                        UserName = email,
+                        Username = email,
                         Email = email,
                         FullName = name,
+                        AuthProvider = "GOOGLE",
+                        ProviderId = googleId,
+                        IsEmailVerified = true,
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow
                     };
+
                     await AddAsync(user);
                 }
 
@@ -157,9 +176,10 @@ namespace Advanced_JWT_Authentication_System.Repositories
                 Email = model.Email,
                 PasswordHash = hashedPassword,
                 PhoneNumber = model.PhoneNumber,
-                UserName = model.UserName,
+                Username = model.UserName,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                AuthProvider = "LOCAL"
             };
 
             // Add the user to the repository
